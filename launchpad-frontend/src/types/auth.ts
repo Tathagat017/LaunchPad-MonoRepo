@@ -6,8 +6,9 @@ export interface LoginPayload {
   role: UserRole;
 }
 
-export interface SignupPayload {
+export interface InvestorSignupPayload {
   full_name: string;
   email: string;
   password: string;
+  role: UserRole;
 }

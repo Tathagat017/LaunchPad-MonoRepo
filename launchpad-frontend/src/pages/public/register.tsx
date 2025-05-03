@@ -1,4 +1,6 @@
+import { RegisterComponent } from "../../components/shared/register-component";
+
 const RegisterPage = () => {
-  return <div>Register</div>;
+  return <RegisterComponent />;
 };
 export default RegisterPage;
