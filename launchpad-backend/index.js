@@ -5,6 +5,10 @@ const { Server } = require("socket.io");
 const { connectDB } = require("./src/utility/dB.connection");
 const { authRouter } = require("./src/routes/auth-routes");
 const { startupProfileRouter } = require("./src/routes/start-up-profile-route");
+const {
+  investmentOfferRouter,
+} = require("./src/routes/investment-offer-route");
+const { chatRouter } = require("./src/routes/chat-routes");
 
 require("dotenv").config();
 
@@ -22,12 +26,50 @@ connectDB();
 
 app.use("/users", authRouter);
 app.use("/startupProfile", startupProfileRouter);
+app.use("/investment-offers", investmentOfferRouter);
+app.use("/pitchRoom", chatRouter);
 
 io.on("connection", (socket) => {
   console.log("A user connected: " + socket.id);
+
+  // Handle "join" event: Let the user join a chat room based on pitchRoom._id
+  socket.on("join", (roomId) => {
+    console.log(`User ${socket.id} joined room: ${roomId}`);
+    socket.join(roomId); // Join the room based on the pitchRoom._id
+  });
+
+  // Handle "newMessage" event: Broadcast message to room
+  socket.on("newMessage", (message, roomId) => {
+    console.log(`New message from ${socket.id} in room: ${roomId}`);
+    // Emit message to the room
+    io.to(roomId).emit("newMessage", message);
+  });
+
+  socket.on("leave", (roomId, user) => {
+    socket.leave(roomId);
+    socket.to(roomId).emit("userDisconnected", user._id, user.name);
+  });
+
   socket.on("disconnect", () => {
     console.log("User disconnected: " + socket.id);
   });
+
+  socket.on("error", (err) => {
+    console.error("Socket error caught:", err);
+    socket.emit("errorOccurred", {
+      message: "An unexpected error occurred.",
+    });
+  });
+});
+
+//error handling
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+  // Optional: exit process, restart, or alert monitoring
 });
 
 const PORT = process.env.PORT || 8080;

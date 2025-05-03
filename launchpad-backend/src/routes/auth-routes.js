@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 
 const { Founder } = require("../models/founder-model");
-const { Investor } = require("../models/invester-model");
+const { Investor } = require("../models/invester-modal");
 
 dotenv.config();
 const router = express.Router();
