@@ -67,7 +67,7 @@ export const RegisterComponent = observer(() => {
   const [profilePicUrl, setProfilePicUrl] = useState("");
 
   // Founder-specific
-  const [startupName, setStartupName] = useState("");
+  const [startUpName, setStartUpName] = useState("");
 
   // Investor-specific
   const [industriesSelected, setIndustriesSelected] = useState<string[]>([]);
@@ -143,7 +143,7 @@ export const RegisterComponent = observer(() => {
 
     const payload =
       userRole === "founder"
-        ? { ...commonPayload, startupName }
+        ? { ...commonPayload, startUpName: startUpName }
         : { ...commonPayload, industriesInterestedIn: industriesSelected };
 
     const success = await authStore.signUp(payload);
@@ -151,10 +151,10 @@ export const RegisterComponent = observer(() => {
     if (success) {
       notifications.show({
         title: "Registration Successful",
-        message: `Welcome, ${userRole}!`,
+        message: `Succesfully registered as ${userRole}`,
         color: "green",
       });
-      navigate(`/${userRole}/dashboard`);
+      navigate(`/login`);
     } else {
       notifications.show({
         title: "Registration Failed",
@@ -278,8 +278,8 @@ export const RegisterComponent = observer(() => {
             <TextInput
               size="xs"
               label="Startup Name"
-              value={startupName}
-              onChange={(e) => setStartupName(e.currentTarget.value)}
+              value={startUpName}
+              onChange={(e) => setStartUpName(e.currentTarget.value)}
             />
           ) : (
             <MultiSelect

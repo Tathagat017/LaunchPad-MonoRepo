@@ -1,3 +1,10 @@
+export type ChatMessage = {
+  _id: string;
+  senderId: string;
+  content: string;
+  timestamp: string;
+};
+
 export type PitchRoom = {
   _id: string;
   roomName: string;
@@ -5,12 +12,9 @@ export type PitchRoom = {
   investorIds: string[];
   startTime: string;
   endTime: string;
-  pitchDeckUrl: string;
+  pitchPdf: string;
+  offeredAmount: number;
+  offeredEquity: number;
+  status: string;
   chatMessages: ChatMessage[];
-};
-
-export type ChatMessage = {
-  senderId: string;
-  content: string;
-  timestamp: string;
 };

@@ -2,10 +2,12 @@ export type MarketSize = "small" | "medium" | "large";
 
 export interface StartUpProfile {
   _id: string;
-  CompanyVision: string;
-  ProductDescription: string;
-  MarketSize: MarketSize;
-  BusinessModel: string;
+  founderId: string;
+  startUpName: string;
+  companyVision: string;
+  productDescription: string;
+  marketSize: MarketSize;
+  businessModel: string;
   pitchPdf: string; // This will be a Cloudinary URL
 }
 

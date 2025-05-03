@@ -4,7 +4,6 @@ import {
   faEdit,
   faEnvelopeOpenText,
   faFilePdf,
-  faHandshake,
   faRocket,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +36,11 @@ export const FounderDashboard = () => {
       const result = await founderStore.getProfile();
       return result;
     },
-    enabled: uiViewStore.EditStartUpProfileModal,
+    onSuccess(data) {
+      if (!data) {
+        navigate("/founder/createStartUpProfile"); // Redirect to create profile if not found
+      }
+    },
   });
 
   const cardGradients: Record<string, string> = {
@@ -55,7 +58,7 @@ export const FounderDashboard = () => {
       icon: faRocket,
       title: "Startup Profile",
       gradient: cardGradients["gradient1"],
-      description: profile?.CompanyVision || "No profile yet",
+      description: profile?.companyVision || "No profile yet",
       action: (
         <Button
           size="xs"
@@ -75,13 +78,6 @@ export const FounderDashboard = () => {
       title: "Funding Simulation",
       gradient: cardGradients["gradient1"],
       onClick: () => navigate("/founder/funding-simulation"),
-    },
-
-    {
-      icon: faHandshake,
-      gradient: cardGradients["gradient1"],
-      title: "Investor Matches",
-      onClick: () => navigate("/founder/investor-matches"),
     },
 
     {

@@ -19,7 +19,19 @@ export const FundingAskForm = () => {
   ];
 
   return (
-    <Card shadow="md" p="lg" radius="md" mb="lg">
+    <Card
+      shadow="md"
+      p="lg"
+      radius="md"
+      mb="lg"
+      w={"100%"}
+      style={{
+        overflowX: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <Title order={3} mb="md">
         Funding Ask
       </Title>
@@ -27,6 +39,7 @@ export const FundingAskForm = () => {
         <NumberInput
           label="Funding Amount (USD)"
           value={amount}
+          w={"50%"}
           onChange={(val) => setAmount(val === "" ? "" : Number(val))}
           parser={(val) => val?.replace(/\$\s?|(,*)/g, "")}
           formatter={(val) => (!Number.isNaN(Number(val)) ? `$ ${val}` : "")}
@@ -36,6 +49,7 @@ export const FundingAskForm = () => {
           value={equity}
           onChange={(val) => setEquity(val === "" ? "" : Number(val))}
           min={0}
+          w={"50%"}
           max={100}
           precision={2}
           step={0.1}
@@ -48,7 +62,7 @@ export const FundingAskForm = () => {
         </Text>
       )}
 
-      <PieChart width={300} height={250}>
+      <PieChart width={500} height={300} style={{ marginTop: "20px" }}>
         <Pie
           data={data}
           cx="50%"

@@ -3,12 +3,14 @@ import { AuthStore } from "./auth-store";
 import { UiViewStore } from "./ui-view-store";
 import { QueryClient } from "@tanstack/react-query";
 import { FounderStore } from "./founder-store";
+import { InvestmentOfferStore } from "./investment-offer-store";
 
 const queryClient = new QueryClient();
 
 export const store = {
   authStore: new AuthStore(queryClient),
   founderStore: new FounderStore(queryClient),
+  investmentOfferStore: new InvestmentOfferStore(queryClient),
   uiViewStore: new UiViewStore(),
   queryClient,
 };

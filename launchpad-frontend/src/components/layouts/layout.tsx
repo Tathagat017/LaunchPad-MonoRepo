@@ -6,6 +6,8 @@ export const Layout = () => (
   <>
     <NavBar />
     <EditStartUpProfileModal />
-    <Outlet />
+    <div style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}>
+      <Outlet />
+    </div>
   </>
 );

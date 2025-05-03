@@ -9,23 +9,34 @@ import {
   Text,
   Anchor,
   ActionIcon,
+  TextInput,
+  Tooltip,
+  FileButton,
 } from "@mantine/core";
 
 import { useStore } from "../../hooks/use-store";
 import { notifications } from "@mantine/notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPen,
+  faEye,
+  faFile,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 
 import { StartUpProfile } from "../../types/start-up-profile";
 import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
+import { uploadPdfToCloudinary } from "../../utils/cloudinary-pdf-upload";
 
 const initialState: StartUpProfile = {
   _id: "",
-  CompanyVision: "",
-  ProductDescription: "",
-  MarketSize: "small",
-  BusinessModel: "",
+  founderId: "",
+  startUpName: "",
+  companyVision: "",
+  productDescription: "",
+  marketSize: "small",
+  businessModel: "",
   pitchPdf: "",
 };
 
@@ -52,6 +63,7 @@ const EditStartUpProfileModal = observer(function EditStartUpProfileModal() {
   const { founderStore, uiViewStore } = useStore();
   const [state, dispatch] = useReducer(reducer, initialState);
   const [editable, setEditable] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const { isLoading } = useQuery({
     queryKey: ["startup-profile"],
@@ -63,14 +75,48 @@ const EditStartUpProfileModal = observer(function EditStartUpProfileModal() {
       if (!data) return;
       dispatch({ type: "SET_PROFILE", payload: data });
     },
-    enabled: uiViewStore.EditStartUpProfileModal,
-    refetchOnMount: true,
   });
 
   const handleClose = () => {
     dispatch({ type: "RESET" });
     setEditable(false);
     uiViewStore.toggleEditStartUpProfile(false);
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      notifications.show({
+        title: "File Too Large",
+        message: `PDF size must be less than ${MAX_SIZE_MB}MB`,
+        color: "red",
+      });
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const url = await uploadPdfToCloudinary(file);
+      dispatch({
+        type: "UPDATE_FIELD",
+        payload: { key: "pitchPdf", value: url },
+      });
+      notifications.show({
+        title: "Upload Successful",
+        message: "PDF uploaded successfully",
+        color: "green",
+      });
+    } catch {
+      notifications.show({
+        title: "Upload Failed",
+        message: "Failed to upload PDF",
+        color: "red",
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {
@@ -100,38 +146,56 @@ const EditStartUpProfileModal = observer(function EditStartUpProfileModal() {
           <Text size="lg" weight={500}>
             Edit Startup Profile
           </Text>
-          <ActionIcon
-            variant="light"
-            onClick={() => setEditable((prev) => !prev)}
-            aria-label="Edit"
+          <Tooltip
+            label={editable ? "View" : "Edit"}
+            withArrow
+            position="right"
+            withinPortal
           >
-            <FontAwesomeIcon icon={faPen} />
-          </ActionIcon>
+            <ActionIcon
+              variant="light"
+              onClick={() => setEditable((prev) => !prev)}
+              aria-label="Edit"
+            >
+              <FontAwesomeIcon icon={!editable ? faPen : faEye} />
+            </ActionIcon>
+          </Tooltip>
         </Group>
       }
       size="lg"
       overlayProps={{ blur: 3 }}
     >
       <Stack spacing="sm">
-        <Textarea
-          label="Company Vision"
-          value={state.CompanyVision}
+        <TextInput
+          label="Startup Name"
+          value={state.companyVision}
           onChange={(e) =>
             dispatch({
               type: "UPDATE_FIELD",
-              payload: { key: "CompanyVision", value: e.currentTarget.value },
+              payload: { key: "startUpName", value: e.currentTarget.value },
+            })
+          }
+          disabled={!editable}
+        />
+        <Textarea
+          label="Company Vision"
+          value={state.companyVision}
+          onChange={(e) =>
+            dispatch({
+              type: "UPDATE_FIELD",
+              payload: { key: "companyVision", value: e.currentTarget.value },
             })
           }
           disabled={!editable}
         />
         <Textarea
           label="Product Description"
-          value={state.ProductDescription}
+          value={state.productDescription}
           onChange={(e) =>
             dispatch({
               type: "UPDATE_FIELD",
               payload: {
-                key: "ProductDescription",
+                key: "productDescription",
                 value: e.currentTarget.value,
               },
             })
@@ -140,47 +204,83 @@ const EditStartUpProfileModal = observer(function EditStartUpProfileModal() {
         />
         <Select
           label="Market Size"
-          data={["Small", "Medium", "Large"]}
-          value={state.MarketSize}
+          data={["small", "medium", "large"]}
+          value={state.marketSize}
           onChange={(value) =>
             dispatch({
               type: "UPDATE_FIELD",
-              payload: { key: "MarketSize", value },
+              payload: { key: "marketSize", value },
             })
           }
           disabled={!editable}
         />
         <Textarea
           label="Business Model"
-          value={state.BusinessModel}
+          value={state.businessModel}
           onChange={(e) =>
             dispatch({
               type: "UPDATE_FIELD",
-              payload: { key: "BusinessModel", value: e.currentTarget.value },
+              payload: { key: "businessModel", value: e.currentTarget.value },
             })
           }
           disabled={!editable}
         />
-        {state.pitchPdf && (
-          <Anchor
-            href={state.pitchPdf}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View Uploaded Pitch PDF
-          </Anchor>
+
+        {state.pitchPdf ? (
+          <Group position="apart">
+            <Anchor
+              href={state.pitchPdf}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Group spacing="xs">
+                <FontAwesomeIcon icon={faFile} />
+                <Text>View Uploaded Pitch PDF</Text>
+              </Group>
+            </Anchor>
+            {editable && (
+              <ActionIcon
+                color="red"
+                onClick={() =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { key: "pitchPdf", value: "" },
+                  })
+                }
+              >
+                <FontAwesomeIcon icon={faTimes} />
+              </ActionIcon>
+            )}
+          </Group>
+        ) : (
+          editable && (
+            <FileButton
+              onChange={handleFileUpload}
+              accept="application/pdf"
+              disabled={uploading}
+            >
+              {(props) => (
+                <Button
+                  {...props}
+                  loading={uploading}
+                  variant="light"
+                  color="blue"
+                >
+                  Upload Pitch PDF
+                </Button>
+              )}
+            </FileButton>
+          )
         )}
 
-        {editable && (
-          <Group position="right" mt="md">
-            <Button onClick={handleSave} loading={isLoading}>
-              Save
-            </Button>
-            <Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Button>
-          </Group>
-        )}
+        <Group position="right" mt="md">
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} loading={isLoading} disabled={!editable}>
+            Save
+          </Button>
+        </Group>
       </Stack>
     </Modal>
   );

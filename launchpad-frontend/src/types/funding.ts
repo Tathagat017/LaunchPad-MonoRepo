@@ -4,17 +4,27 @@ export type FundingRound = {
   amount: number;
   equity: number;
   createdAt: string;
-  offers: InvestorOffer[];
+  offers: InvestmentOffer[];
   status: "active" | "finalized";
 };
 
-export type InvestorOffer = {
+export type InvestmentOffer = {
   _id: string;
   investorName: string;
-  offerAmount: number;
-  requestedEquity: number;
+  investorId: string;
+  founderId: string;
+  offeredAmount: number;
+  offeredEquity: number;
   message?: string;
   status: "pending" | "accepted" | "rejected";
+  isNewOffer: boolean;
+  lastUpdatedBy: {
+    userId: string;
+    role: "investor" | "founder";
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type SimulatedCapTableData = {

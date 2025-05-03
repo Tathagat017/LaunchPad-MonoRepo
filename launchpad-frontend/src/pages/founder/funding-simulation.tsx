@@ -5,7 +5,7 @@ import { FundingSimulationBottomPanel } from "../../components/founder/funding-s
 
 const FundingSimulationPage = () => {
   return (
-    <Container>
+    <Container w={"100%"} p="lg" style={{ overflowX: "hidden" }}>
       <Title order={2} mb="lg">
         Funding Simulation
       </Title>

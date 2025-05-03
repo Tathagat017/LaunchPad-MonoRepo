@@ -16,6 +16,8 @@ const NotificationsPage = lazy(
 );
 const Leaderboard = lazy(() => import("../pages/private-shared/leaderboard"));
 
+const PitchRoomPage = lazy(() => import("../pages/private-shared/pitch-room"));
+
 // Founder Pages
 const FounderDashboard = lazy(
   () => import("../pages/founder/founder-dashboard")
@@ -28,9 +30,7 @@ const FundingSimulation = lazy(
   () => import("../pages/founder/funding-simulation")
 );
 const CapTableView = lazy(() => import("../pages/founder/founder-cap-table"));
-const InvestorMatches = lazy(
-  () => import("../pages/founder/founder-investor-matches")
-);
+
 const PitchHistory = lazy(
   () => import("../pages/founder/founder-pitch-history")
 );
@@ -67,13 +67,13 @@ export const AppRouter: React.FC = () => (
         {/* Private Routes */}
         <Route
           element={
-            // <AuthenticatedRoute>
-            <Layout />
-            // </AuthenticatedRoute>
+            <AuthenticatedRoute>
+              <Layout />
+            </AuthenticatedRoute>
           }
         >
           {/* Shared Auth */}
-
+          <Route path="/pitchRoom/:roomId" element={<PitchRoomPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
 
@@ -89,10 +89,7 @@ export const AppRouter: React.FC = () => (
             element={<FundingSimulation />}
           />
           <Route path="/founder/cap-table" element={<CapTableView />} />
-          <Route
-            path="/founder/investor-matches"
-            element={<InvestorMatches />}
-          />
+
           <Route path="/founder/pitch-room/:roomId" element={<PitchRoom />} />
           <Route path="/founder/pitch-history" element={<PitchHistory />} />
 

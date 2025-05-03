@@ -63,15 +63,25 @@ const useStyles = createStyles((theme) => ({
 const marketSizes: MarketSize[] = ["small", "medium", "large"];
 
 export const CreateStartupProfilePageComponent = () => {
-  const { founderStore } = useStore();
+  const { founderStore, authStore } = useStore();
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [payload, setPayload] = useState<StartUpProfilePayload>({
-    CompanyVision: "",
-    ProductDescription: "",
-    MarketSize: "medium",
-    BusinessModel: "",
+    companyVision: "",
+    productDescription: "",
+    marketSize: "medium",
+    businessModel: "",
     pitchPdf: "",
+    founderId:
+      authStore.Role === "founder" && authStore.User != null
+        ? authStore?.User._id
+        : "",
+    startUpName:
+      authStore.Role === "founder" &&
+      authStore.User &&
+      "startUpName" in authStore.User
+        ? authStore.User.startUpName || ""
+        : "",
   });
 
   const [uploading, setUploading] = useState(false);
@@ -114,10 +124,10 @@ export const CreateStartupProfilePageComponent = () => {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!payload.CompanyVision.trim()) newErrors.CompanyVision = "Required";
-    if (!payload.ProductDescription.trim())
+    if (!payload.companyVision.trim()) newErrors.CompanyVision = "Required";
+    if (!payload.productDescription.trim())
       newErrors.ProductDescription = "Required";
-    if (!payload.BusinessModel.trim()) newErrors.BusinessModel = "Required";
+    if (!payload.businessModel.trim()) newErrors.BusinessModel = "Required";
     if (!payload.pitchPdf) newErrors.pitchPdf = "Upload required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -174,21 +184,30 @@ export const CreateStartupProfilePageComponent = () => {
         </Title>
         <Stack spacing="sm">
           <TextInput
-            label="Company Vision"
-            value={payload.CompanyVision}
+            label="Startup Name"
+            value={payload.startUpName}
             onChange={(e) =>
-              setPayload({ ...payload, CompanyVision: e.currentTarget.value })
+              setPayload({ ...payload, startUpName: e.currentTarget.value })
+            }
+            error={errors.startUpName}
+            withAsterisk
+          />
+          <TextInput
+            label="Company Vision"
+            value={payload.companyVision}
+            onChange={(e) =>
+              setPayload({ ...payload, companyVision: e.currentTarget.value })
             }
             error={errors.CompanyVision}
             withAsterisk
           />
           <Textarea
             label="Product Description"
-            value={payload.ProductDescription}
+            value={payload.productDescription}
             onChange={(e) =>
               setPayload({
                 ...payload,
-                ProductDescription: e.currentTarget.value,
+                productDescription: e.currentTarget.value,
               })
             }
             error={errors.ProductDescription}
@@ -197,16 +216,16 @@ export const CreateStartupProfilePageComponent = () => {
           <Select
             label="Market Size"
             data={marketSizes}
-            value={payload.MarketSize}
+            value={payload.marketSize}
             onChange={(value) =>
-              setPayload({ ...payload, MarketSize: value as MarketSize })
+              setPayload({ ...payload, marketSize: value as MarketSize })
             }
           />
           <Textarea
             label="Business Model"
-            value={payload.BusinessModel}
+            value={payload.businessModel}
             onChange={(e) =>
-              setPayload({ ...payload, BusinessModel: e.currentTarget.value })
+              setPayload({ ...payload, businessModel: e.currentTarget.value })
             }
             minRows={3}
             error={errors.BusinessModel}

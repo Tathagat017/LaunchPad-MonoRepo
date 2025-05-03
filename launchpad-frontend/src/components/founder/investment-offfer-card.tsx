@@ -2,30 +2,63 @@ import { faHandshake } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Badge, Button, Card, Flex, Group, Text } from "@mantine/core";
 import { useState } from "react";
+import { useStore } from "../../hooks/use-store";
+import { InvestmentOffer } from "../../types/funding";
 
-type InvestmentOfferCardProps = {
+interface InvestmentOfferCardProps extends InvestmentOffer {
   investorName: string;
   offeredAmount: number;
   offeredEquity: number;
+  offerId: string;
+  founderId: string;
+  status: "pending" | "accepted" | "rejected";
+  investorId: string;
+  createdAt: string;
+  updatedAt: string;
+  _id: string;
   message?: string;
-};
+  onSimulateOfferClick: (amout: number, equity: number) => void;
+  onNegotiateOfferClick: (
+    offeredAmount: number,
+    offeredEquity: number,
+    offerId: string
+  ) => void;
+}
 
 const InvestmentOfferCard = ({
   investorName,
   offeredAmount,
   offeredEquity,
+  offerId,
+  onNegotiateOfferClick,
   message,
+  onSimulateOfferClick,
+  //founderId,
+  status,
+  // investorId,
+  // createdAt,
+  // updatedAt,
+  // _id,
+  lastUpdatedBy,
+  isNewOffer,
 }: InvestmentOfferCardProps) => {
-  const [status, setStatus] = useState<"pending" | "accepted" | "rejected">(
-    "pending"
-  );
+  const [newStatus, setNewStatus] = useState<
+    "pending" | "accepted" | "rejected"
+  >(status);
+  const { authStore } = useStore();
+  const { _id: userId } = authStore.User!;
+  const userRole = authStore.Role!;
 
   const handleAccept = () => {
-    setStatus("accepted");
+    setNewStatus("accepted");
   };
 
   const handleReject = () => {
-    setStatus("rejected");
+    setNewStatus("rejected");
+  };
+
+  const handleNegotiate = () => {
+    onNegotiateOfferClick(offeredAmount, offeredEquity, offerId);
   };
 
   return (
@@ -37,14 +70,14 @@ const InvestmentOfferCard = ({
         </Group>
         <Badge
           color={
-            status === "accepted"
+            newStatus === "accepted"
               ? "green"
-              : status === "rejected"
+              : newStatus === "rejected"
               ? "red"
               : "gray"
           }
         >
-          {status.charAt(0).toUpperCase() + status.slice(1)}
+          {newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}
         </Badge>
       </Flex>
 
@@ -57,45 +90,70 @@ const InvestmentOfferCard = ({
         </Text>
       )}
 
-      <Group mt="md" position="apart">
-        {status === "pending" ? (
+      <Group mt="md" position="apart" grow>
+        {newStatus === "pending" ? (
           <>
             <Button
               variant="light"
               color="blue"
               size="xs"
-              onClick={() => alert("Negotiating offer...")} // Simulate negotiation logic
+              onClick={handleNegotiate}
             >
               Negotiate Offer
             </Button>
+
+            <Button
+              variant="outline"
+              color="teal"
+              size="xs"
+              onClick={() => onSimulateOfferClick(offeredAmount, offeredEquity)}
+            >
+              Simulate Accepted Offer
+            </Button>
+
             <Group>
-              <Button
-                variant="outline"
-                color="green"
-                size="xs"
-                onClick={handleAccept}
-              >
-                Accept Offer
-              </Button>
+              {(lastUpdatedBy.userId != userId &&
+                lastUpdatedBy.role != userRole) ||
+              isNewOffer ? (
+                <Button
+                  variant="outline"
+                  color="green"
+                  size="xs"
+                  onClick={handleAccept}
+                >
+                  Accept
+                </Button>
+              ) : null}
               <Button
                 variant="outline"
                 color="red"
                 size="xs"
                 onClick={handleReject}
               >
-                Reject Offer
+                Reject
               </Button>
             </Group>
           </>
-        ) : status === "accepted" ? (
-          <Button
-            variant="light"
-            color="green"
-            size="xs"
-            onClick={() => alert("Finalizing offer...")}
-          >
-            Finalize Offer
-          </Button>
+        ) : newStatus === "accepted" || status == "accepted" ? (
+          <>
+            <Button
+              variant="light"
+              color="green"
+              size="xs"
+              onClick={() => alert("Finalizing offer...")}
+            >
+              Finalize Offer
+            </Button>
+            <Button
+              variant="outline"
+              color="indigo"
+              size="xs"
+              w={80}
+              onClick={() => onSimulateOfferClick(offeredAmount, offeredEquity)}
+            >
+              Simulate Accepted Offer
+            </Button>
+          </>
         ) : (
           <Text size="sm" color="dimmed">
             Offer Rejected

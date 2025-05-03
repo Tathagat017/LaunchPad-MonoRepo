@@ -14,7 +14,7 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { observer } from "mobx-react-lite";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import socket from "../../utils/socket";
 import { useStore } from "../../hooks/use-store";
 import { getImage } from "../../utils/image-map";
 
@@ -53,9 +53,8 @@ export const NavBar = observer(function NavBar() {
 
   const founderLinks = [
     { label: "Dashboard", href: "/founder/dashboard" },
-    { label: "Startup Profile", href: "/founder/profile" },
-    { label: "Funding Simulation", href: "/founder/funding" },
-    { label: "Pitch Room", href: "/founder/pitch-room" },
+    { label: "Funding Simulation", href: "/founder/funding-simulation" },
+    { label: "Leaderboard", href: "/investor/leaderboard" },
   ];
 
   const investorLinks = [
@@ -147,7 +146,8 @@ const AvatarPopover = observer(function AvatarPopover({
 
   const handleLogOut = async () => {
     await authStore.logout();
-    navigate("/");
+    await socket.disconnect();
+    navigate("/login");
   };
 
   return (

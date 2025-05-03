@@ -1,9 +1,6 @@
+import ChatRoom from "../../components/shared/chat-room";
+
 const PitchRoomPage = () => {
-  return (
-    <div>
-      <h1>Founder Pitch history</h1>
-      <p>This is the startup profile page.</p>
-    </div>
-  );
+  return <ChatRoom />;
 };
 export default PitchRoomPage;

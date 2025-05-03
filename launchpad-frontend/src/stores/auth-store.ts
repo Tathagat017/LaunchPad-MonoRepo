@@ -3,6 +3,8 @@ import axios, { AxiosResponse } from "axios";
 import { makeAutoObservable, runInAction } from "mobx";
 import { User, UserRole } from "../types/user";
 import { LoginPayload, RegisterPayload } from "../types/auth";
+import { Founder } from "../types/founder";
+import { Investor } from "../types/investor";
 
 export class AuthStore {
   token: string | null = localStorage.getItem("auth_token");
@@ -29,7 +31,7 @@ export class AuthStore {
     return this.token;
   }
 
-  get User() {
+  get User(): Founder | Investor | null {
     return this.user;
   }
 
@@ -60,7 +62,7 @@ export class AuthStore {
   async signUp(payload: RegisterPayload): Promise<User | null> {
     try {
       const res: AxiosResponse<User> = await axios.post(
-        `${this.baseUrl}users/signup`,
+        `${this.baseUrl}users/register`,
         payload
       );
       return res.data;

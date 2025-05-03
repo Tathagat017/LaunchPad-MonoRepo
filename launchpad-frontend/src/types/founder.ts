@@ -3,7 +3,7 @@ export interface Founder {
   fullName: string;
   email: string;
   profilePictureUrl?: string;
-  startupName?: string;
+  startUpName?: string;
   role?: string;
   createdAt: string;
   updatedAt: string;

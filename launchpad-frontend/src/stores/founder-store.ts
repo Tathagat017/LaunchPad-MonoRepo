@@ -6,6 +6,7 @@ import {
   StartUpProfilePayload,
 } from "../types/start-up-profile";
 import { notifications } from "@mantine/notifications";
+import { User } from "../types/user";
 
 export class FounderStore {
   startupProfile: StartUpProfile | null = null;
@@ -23,6 +24,11 @@ export class FounderStore {
 
   private loadTokenFromLocalStorage(): string | null {
     return localStorage.getItem("auth_token") ?? null;
+  }
+
+  private loadUserFromLocalStorage(): User | null {
+    const user = localStorage.getItem("user");
+    return user ? JSON.parse(user) : null;
   }
 
   private get authHeaders() {
@@ -45,7 +51,7 @@ export class FounderStore {
         throw new Error("No auth headers available");
       }
       const { data } = await axios.post<StartUpProfile>(
-        `${this.baseUrl}founder/profile`,
+        `${this.baseUrl}startupProfile`,
         payload,
         this.authHeaders
       );
@@ -70,20 +76,26 @@ export class FounderStore {
   }
 
   async getProfile() {
+    const user = this.loadUserFromLocalStorage();
+    if (!user) {
+      throw new Error("User not found in local storage");
+    }
+    const founderId = user._id;
     try {
       if (!this.authHeaders) {
         throw new Error("No auth headers available");
       }
-      const { data } = await axios.get<StartUpProfile>(
-        `${this.baseUrl}founder/profile`,
+      const { data } = await axios.get<{ profile: StartUpProfile }>(
+        `${this.baseUrl}startupProfile/founder/${founderId}`,
         this.authHeaders
       );
       runInAction(() => {
-        this.startupProfile = data;
+        this.startupProfile = data.profile;
       });
-      return data;
+      return data.profile;
     } catch (error) {
       console.error("Failed to fetch profile", error);
+      return null;
     }
   }
 
