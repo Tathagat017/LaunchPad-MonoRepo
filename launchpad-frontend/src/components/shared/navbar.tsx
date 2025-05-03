@@ -118,7 +118,14 @@ export const NavBar = observer(function NavBar() {
             <Stack spacing="md" align="center">
               {isLoggedIn && (
                 <Avatar color="blue" radius="xl">
-                  {authStore.User?.fullName ?? "U"}
+                  {authStore.User != null ? (
+                    <img
+                      src={authStore.User?.profilePictureUrl}
+                      alt="Profile"
+                    />
+                  ) : (
+                    "A"
+                  )}
                 </Avatar>
               )}
               {items}

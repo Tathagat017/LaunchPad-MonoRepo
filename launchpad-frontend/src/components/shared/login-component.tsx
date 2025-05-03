@@ -112,7 +112,7 @@ export const LoginComponent = observer(function LoginComponent() {
       <Paper className={classes.loginPaper} radius="lg" shadow="md">
         <Stack spacing="md">
           <Title order={2} align="center">
-            Login
+            {userRole === "founder" ? "Founder Login" : "Investor Login"}
           </Title>
 
           <TextInput
@@ -136,18 +136,17 @@ export const LoginComponent = observer(function LoginComponent() {
           <div className={classes.switchWrapper}>
             <Switch
               checked={userRole === "founder"}
+              labelPosition="left"
               onChange={(e) =>
                 uiViewStore.toggleUserRoleForLogin(
                   e.currentTarget.checked ? "founder" : "investor"
                 )
               }
-              label={`Login as ${
-                userRole === "founder" ? "Founder" : "Investor"
-              }`}
+              label={`Login as ${"Founder"}`}
             />
           </div>
 
-          <Button onClick={handleLogin} fullWidth>
+          <Button onClick={handleLogin} fullWidth variant="gradient">
             Login
           </Button>
 

@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import { makeAutoObservable, runInAction } from "mobx";
 import { User, UserRole } from "../types/user";
-import { LoginPayload, SignupPayload } from "../types/auth";
+import { LoginPayload, RegisterPayload } from "../types/auth";
 
 export class AuthStore {
   token: string | null = localStorage.getItem("auth_token");
@@ -57,7 +57,7 @@ export class AuthStore {
     localStorage.clear();
   }
 
-  async signUp(payload: SignupPayload): Promise<User | null> {
+  async signUp(payload: RegisterPayload): Promise<User | null> {
     try {
       const res: AxiosResponse<User> = await axios.post(
         `${this.baseUrl}users/signup`,

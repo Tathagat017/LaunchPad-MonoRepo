@@ -21,6 +21,7 @@ import { getImage } from "../../utils/image-map";
 import { PasswordWithValidation } from "./password-with-validation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImagePortrait } from "@fortawesome/free-solid-svg-icons";
+import { uploadImageToCloudinary } from "../../utils/cloudinary-image-upload";
 
 const useStyles = createStyles((theme) => ({
   container: {
@@ -48,15 +49,6 @@ const useStyles = createStyles((theme) => ({
 
 const industries = ["Manufacturing", "IT", "Services", "Healthcare", "Finance"];
 
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 export const RegisterComponent = observer(() => {
   const { authStore, uiViewStore } = useStore();
   const navigate = useNavigate();
@@ -72,7 +64,7 @@ export const RegisterComponent = observer(() => {
   const [bio, setBio] = useState("");
   const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState<File | null>(null);
-  const [base64Image, setBase64Image] = useState("");
+  const [profilePicUrl, setProfilePicUrl] = useState("");
 
   // Founder-specific
   const [startupName, setStartupName] = useState("");
@@ -84,6 +76,7 @@ export const RegisterComponent = observer(() => {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const validateEmail = (email: string) =>
     !email
@@ -93,6 +86,40 @@ export const RegisterComponent = observer(() => {
       : null;
 
   const validateName = (name: string) => (!name ? "Name required" : null);
+
+  const handleFileUpload = async (file: File): Promise<string | null> => {
+    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+
+    if (file.size > MAX_SIZE_BYTES) {
+      notifications.show({
+        title: "File Too Large",
+        message: `Image size must be less than ${MAX_SIZE_MB}MB`,
+        color: "red",
+      });
+      return null;
+    }
+
+    try {
+      setUploading(true);
+      const url = await uploadImageToCloudinary(file); // ✅ use the input `file`
+      notifications.show({
+        title: "Upload Successful",
+        message: "Image uploaded successfully",
+        color: "green",
+      });
+      return url;
+    } catch {
+      notifications.show({
+        title: "Upload Failed",
+        message: "Failed to upload image",
+        color: "red",
+      });
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleRegister = async () => {
     const nameErr = validateName(fullName);
@@ -105,18 +132,12 @@ export const RegisterComponent = observer(() => {
 
     if (nameErr || emailErr || passErr) return;
 
-    let base64 = base64Image;
-    if (profilePic && !base64Image) {
-      base64 = await fileToBase64(profilePic);
-      setBase64Image(base64);
-    }
-
     const commonPayload = {
       fullName,
       email,
       bio,
       password,
-      profilePictureUrl: base64,
+      profilePictureUrl: profilePicUrl,
       role: userRole,
     };
 
@@ -155,7 +176,7 @@ export const RegisterComponent = observer(() => {
             align="center"
             color={userRole === "founder" ? "white" : "black"}
           >
-            Register as {userRole === "founder" ? "Founder" : "Investor"}
+            Registering as {userRole === "founder" ? "Founder" : "Investor"}
           </Title>
 
           <Switch
@@ -164,7 +185,7 @@ export const RegisterComponent = observer(() => {
               <span
                 style={{ color: userRole === "founder" ? "white" : "black" }}
               >
-                Register as {userRole === "founder" ? "Founder" : "Investor"}
+                Register as Founder
               </span>
             }
             onChange={(e) =>
@@ -218,8 +239,13 @@ export const RegisterComponent = observer(() => {
               </Text>
             )}
             <FileButton
-              onChange={(file) => {
-                if (file) setProfilePic(file);
+              onChange={async (file) => {
+                if (!file) return;
+                setProfilePic(file);
+                const url = await handleFileUpload(file);
+                if (url) {
+                  setProfilePicUrl(url); // ✅ store Cloudinary URL in base64Image variable
+                }
               }}
               accept="image/png,image/jpeg"
             >
@@ -227,6 +253,7 @@ export const RegisterComponent = observer(() => {
                 <Button
                   {...props}
                   size="xs"
+                  loading={uploading}
                   variant={"filled"}
                   style={{ flexGrow: profilePic ? "" : 1 }}
                   leftIcon={

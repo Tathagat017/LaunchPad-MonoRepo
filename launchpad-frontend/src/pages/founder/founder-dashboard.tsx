@@ -1,9 +1,6 @@
+import FounderDashboard from "../../components/founder/founder-dashboard";
+
 const FounderDashboardPage = () => {
-  return (
-    <div>
-      <h1>Founder Pitch history</h1>
-      <p>This is the startup profile page.</p>
-    </div>
-  );
+  return <FounderDashboard />;
 };
 export default FounderDashboardPage;

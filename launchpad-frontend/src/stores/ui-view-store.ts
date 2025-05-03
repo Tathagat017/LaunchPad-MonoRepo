@@ -2,8 +2,8 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { UserRole } from "../types/user";
 
 export class UiViewStore {
-  _toggleUserRoleForLogin: UserRole = "investor";
-  _createRoomModalOpen = false;
+  _toggleUserRoleForLogin: UserRole = "founder";
+  _editStartUpProfileModal = false;
 
   constructor() {
     makeAutoObservable(this);
@@ -19,13 +19,13 @@ export class UiViewStore {
     });
   }
 
-  get CreateRoomModalOpen() {
-    return this._createRoomModalOpen;
+  get EditStartUpProfileModal() {
+    return this._editStartUpProfileModal;
   }
 
-  set CreateRoomModalOpen(value: boolean) {
+  toggleEditStartUpProfile(value: boolean) {
     runInAction(() => {
-      this._createRoomModalOpen = value;
+      this._editStartUpProfileModal = value;
     });
   }
 }

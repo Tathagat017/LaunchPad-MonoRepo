@@ -6,9 +6,13 @@ export interface LoginPayload {
   role: UserRole;
 }
 
-export interface InvestorSignupPayload {
-  full_name: string;
+export interface RegisterPayload {
+  fullName: string;
   email: string;
   password: string;
+  profilePictureUrl: string;
   role: UserRole;
+  bio?: string;
+  startup_name?: string;
+  industries_interested_in?: string[];
 }

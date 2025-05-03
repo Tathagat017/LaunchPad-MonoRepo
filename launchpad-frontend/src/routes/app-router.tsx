@@ -20,7 +20,10 @@ const Leaderboard = lazy(() => import("../pages/private-shared/leaderboard"));
 const FounderDashboard = lazy(
   () => import("../pages/founder/founder-dashboard")
 );
-const StartupProfile = lazy(() => import("../pages/founder/start-up-profile"));
+const CreateStartupProfile = lazy(
+  () => import("../pages/founder/create-startup-profile")
+);
+
 const FundingSimulation = lazy(
   () => import("../pages/founder/funding-simulation")
 );
@@ -64,9 +67,9 @@ export const AppRouter: React.FC = () => (
         {/* Private Routes */}
         <Route
           element={
-            <AuthenticatedRoute>
-              <Layout />
-            </AuthenticatedRoute>
+            // <AuthenticatedRoute>
+            <Layout />
+            // </AuthenticatedRoute>
           }
         >
           {/* Shared Auth */}
@@ -76,7 +79,11 @@ export const AppRouter: React.FC = () => (
 
           {/* Founder */}
           <Route path="/founder/dashboard" element={<FounderDashboard />} />
-          <Route path="/founder/startup-profile" element={<StartupProfile />} />
+          <Route
+            path="/founder/createStartUpProfile"
+            element={<CreateStartupProfile />}
+          />
+
           <Route
             path="/founder/funding-simulation"
             element={<FundingSimulation />}
