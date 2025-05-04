@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Card, NumberInput, Title, Group, Text } from "@mantine/core";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { Card, Group, NumberInput, Text, Title } from "@mantine/core";
+import { useState } from "react";
+import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
 const COLORS = ["#4dabf7", "#82ca9d"];
 

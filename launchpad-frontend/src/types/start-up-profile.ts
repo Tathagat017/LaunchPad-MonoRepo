@@ -9,6 +9,8 @@ export interface StartUpProfile {
   marketSize: MarketSize;
   businessModel: string;
   pitchPdf: string; // This will be a Cloudinary URL
+  requestedFunding?: number;
+  requestedEquity?: number;
 }
 
 export type StartUpProfilePayload = Omit<StartUpProfile, "_id">;

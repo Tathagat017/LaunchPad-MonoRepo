@@ -14,16 +14,39 @@ require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
+const corsOptions = {
+  origin: "*", // Or specify your client URL for better security
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+    "Origin",
+    "Access-Control-Request-Method",
+    "Access-Control-Request-Headers",
+    "X-CSRF-Token",
+    "X-API-Key",
+  ],
+  exposedHeaders: ["Content-Length", "X-Request-ID", "X-Response-Time"],
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options("/", cors(corsOptions));
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
 });
 
-app.use(cors());
 app.use(express.json());
 connectDB();
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the Investment Platform API");
+});
 app.use("/users", authRouter);
 app.use("/startupProfile", startupProfileRouter);
 app.use("/investment-offers", investmentOfferRouter);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Button,
   Group,
@@ -7,32 +8,27 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { observer } from "mobx-react-lite";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
-export interface NegotiateOfferModalHandle {
-  showModal: (
-    offeredAmount: number,
-    offeredEquity: number,
-    offerId: string
-  ) => void;
+export interface InvesterOfferModalHandle {
+  showModal: (founderId: string) => void;
 }
 
 const COLORS = ["#4caf50", "#2196f3"];
 
 const NegotiateOfferModal = observer(
-  forwardRef<NegotiateOfferModalHandle>((_, ref) => {
+  forwardRef<InvesterOfferModalHandle>((_, ref) => {
     const [opened, setOpened] = useState(false);
     const [amount, setAmount] = useState<number>(0);
     const [equity, setEquity] = useState<number>(0);
-    const [offerId, setOfferId] = useState<string>("");
+    const [founderId, setFounderId] = useState<string>("");
 
     useImperativeHandle(ref, () => ({
-      showModal(offeredAmount: number, offeredEquity: number, offerId: string) {
-        setAmount(offeredAmount);
-        setEquity(offeredEquity);
-        setOfferId(offerId);
+      showModal(founderId: string) {
+        setFounderId(founderId);
         setOpened(true);
       },
     }));
@@ -46,11 +42,14 @@ const NegotiateOfferModal = observer(
     ];
 
     const handleSubmit = () => {
-      alert(
-        `Counter-offer sent: $${amount} for ${equity}% equity for ${offerId}`
-      );
-      //make API call to send counter-offer
+      //
+
       setOpened(false);
+      notifications.show({
+        title: "Offer creation successful",
+        message: `Offer created!`,
+        color: "green",
+      });
     };
 
     return (
@@ -110,7 +109,7 @@ const NegotiateOfferModal = observer(
 
           <Group position="right">
             <Button onClick={handleSubmit} color="blue">
-              Send Counter Offer
+              Send Offer
             </Button>
           </Group>
         </Stack>

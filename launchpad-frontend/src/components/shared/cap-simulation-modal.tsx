@@ -1,12 +1,12 @@
-import React, {
-  useState,
-  useImperativeHandle,
+import { Modal, Stack, Text, Title } from "@mantine/core";
+import { observer } from "mobx-react-lite";
+import {
   forwardRef,
   ForwardRefRenderFunction,
+  useImperativeHandle,
+  useState,
 } from "react";
-import { Modal, Title, Text, Stack } from "@mantine/core";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { observer } from "mobx-react-lite";
+import { Cell, Legend, Pie, PieChart, Tooltip } from "recharts";
 
 export interface CapSimulationModalHandle {
   showModal: (offerAmount: number, offerEquity: number) => void;
@@ -62,7 +62,7 @@ const CapSimulationModal: ForwardRefRenderFunction<CapSimulationModalHandle> = (
             cx="50%"
             cy="50%"
             outerRadius={80}
-            label={({ name, percent }) =>
+            label={({ name, percent }: { name: string; percent: number }) =>
               `${name}: ${(percent * 100).toFixed(0)}%`
             }
           >

@@ -1,32 +1,32 @@
-import React, { useReducer, useState } from "react";
 import {
-  Modal,
-  Textarea,
+  ActionIcon,
+  Anchor,
   Button,
+  FileButton,
   Group,
+  Modal,
   Select,
   Stack,
   Text,
-  Anchor,
-  ActionIcon,
+  Textarea,
   TextInput,
   Tooltip,
-  FileButton,
 } from "@mantine/core";
+import { useReducer, useState } from "react";
 
-import { useStore } from "../../hooks/use-store";
-import { notifications } from "@mantine/notifications";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPen,
   faEye,
   faFile,
+  faPen,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { notifications } from "@mantine/notifications";
+import { useStore } from "../../hooks/use-store";
 
-import { StartUpProfile } from "../../types/start-up-profile";
 import { useQuery } from "@tanstack/react-query";
 import { observer } from "mobx-react-lite";
+import { StartUpProfile } from "../../types/start-up-profile";
 import { uploadPdfToCloudinary } from "../../utils/cloudinary-pdf-upload";
 
 const initialState: StartUpProfile = {

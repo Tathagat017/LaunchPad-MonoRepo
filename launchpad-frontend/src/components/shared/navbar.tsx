@@ -54,13 +54,13 @@ export const NavBar = observer(function NavBar() {
   const founderLinks = [
     { label: "Dashboard", href: "/founder/dashboard" },
     { label: "Funding Simulation", href: "/founder/funding-simulation" },
-    { label: "Leaderboard", href: "/investor/leaderboard" },
+    { label: "Leaderboard", href: "/leaderboard" },
   ];
 
   const investorLinks = [
     { label: "Explore Startups", href: "/investor/explore" },
     { label: "Pitch Rooms", href: "/investor/pitch-rooms" },
-    { label: "Leaderboard", href: "/investor/leaderboard" },
+    { label: "Leaderboard", href: "/leaderboard" },
   ];
 
   const publicLinks = [{ label: "Login", href: "/login" }];

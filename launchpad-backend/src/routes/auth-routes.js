@@ -102,4 +102,31 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/all", async (req, res) => {
+  try {
+    const founders = await Founder.find({}, "_id fullName");
+    const investors = await Investor.find({}, "_id fullName");
+
+    const users = [
+      ...founders.map((f) => ({
+        id: f._id,
+        fullName: f.fullName,
+        role: "founder",
+      })),
+      ...investors.map((i) => ({
+        id: i._id,
+        fullName: i.fullName,
+        role: "investor",
+      })),
+    ];
+
+    return res.status(200).json(users);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: err.message });
+  }
+});
+
 module.exports = { authRouter: router };

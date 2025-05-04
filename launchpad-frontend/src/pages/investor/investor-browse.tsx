@@ -1,9 +1,6 @@
+import InvestorBrowse from "../../components/investor/investor-browse";
+
 const InvestorBrowsePage = () => {
-  return (
-    <div>
-      <h1>Founder Pitch history</h1>
-      <p>This is the startup profile page.</p>
-    </div>
-  );
+  return <InvestorBrowse />;
 };
 export default InvestorBrowsePage;

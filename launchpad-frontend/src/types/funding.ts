@@ -36,3 +36,12 @@ export type SimulatedCapTableData = {
     amount: number;
   }[];
 };
+
+export type InvestmentOfferPayload = {
+  investorId: string;
+  investorName: string;
+  founderId: string;
+  offeredAmount: number;
+  offeredEquity: number;
+  message: string;
+};

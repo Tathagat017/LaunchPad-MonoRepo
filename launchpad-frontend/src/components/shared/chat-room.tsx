@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Group,
-  TextInput,
-  Paper,
-  ScrollArea,
   Avatar,
   Badge,
+  Button,
   createStyles,
-  Title,
+  Group,
   Loader,
+  Paper,
+  ScrollArea,
+  TextInput,
+  Title,
 } from "@mantine/core";
-import { Document, Page, pdfjs } from "react-pdf";
-import { useParams, useNavigate } from "react-router-dom";
-import { useStore } from "../../hooks/use-store";
 import { showNotification } from "@mantine/notifications";
-import socket from "../../utils/socket";
+import { useEffect, useState } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import { useNavigate, useParams } from "react-router-dom";
+import { useStore } from "../../hooks/use-store";
 import { ChatMessage, PitchRoom } from "../../types/pitch-room";
+import socket from "../../utils/socket";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 

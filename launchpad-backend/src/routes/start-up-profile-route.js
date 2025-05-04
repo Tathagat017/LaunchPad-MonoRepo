@@ -100,4 +100,27 @@ router.get("/founder/:founderId", AuthenticationHandler, async (req, res) => {
   }
 });
 
+router.patch("/:id/update-funding", async (req, res) => {
+  try {
+    const { requestAmount = 0, requestedEquity = 0 } = req.body;
+
+    const updatedProfile = await StartUpProfile.findByIdAndUpdate(
+      req.params.id,
+      { requestAmount, requestedEquity },
+      { new: true }
+    );
+
+    if (!updatedProfile) {
+      return res.status(404).json({ message: "Startup profile not found" });
+    }
+
+    return res.status(200).json(updatedProfile);
+  } catch (err) {
+    console.error("Update funding error:", err);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: err.message });
+  }
+});
+
 module.exports = { startupProfileRouter: router };

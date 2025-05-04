@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const startUpProfileSchema = new mongoose.Schema(
   {
     founderId: {
@@ -32,12 +30,14 @@ const startUpProfileSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    requestAmount: {
+      type: Number,
+      default: 0,
+    },
+    requestedEquity: {
+      type: Number,
+      default: 0,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
-
-const StartUpProfile = mongoose.model("StartUpProfile", startUpProfileSchema);
-
-module.exports = { StartUpProfile };
